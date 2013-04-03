@@ -8,6 +8,10 @@ body {
   padding:10px;
   color:#ddd;
   line-height:1.35em;
+  white-space: pre;
+  word-wrap: normal;
+  overflow: visible;
   margin:0;
   padding:0;
+  tab-size: 4;
 }

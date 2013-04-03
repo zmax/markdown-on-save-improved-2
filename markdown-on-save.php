@@ -2,7 +2,7 @@
 /*
 Plugin Name: Markdown on Save Improved 2
 Description: Allows you to compose content in Markdown on a per-item basis from WP admin or mobile/3rd-party apps. The markdown version is stored separately, so you can deactivate this plugin and your posts won't spew out Markdown. Based on <a href="http://wordpress.org/extend/plugins/markdown-osi/">Mark Jaquith's plugin</a>. It supports Github Fenced code blocks, and integrated with <a href="http://epiceditor.com/">EpicEditor</a>.
-Version: 2.5.3
+Version: 2.5.4
 
 Author: Starck Lin
 Author URI: http://blog.starcklin.com
@@ -28,14 +28,14 @@ if(!function_exists('get_plugin_data')) {
 // Define the default path and URL for the WP Editor plugin
 define('EPICEDITOR_PATH', plugin_dir_path( __FILE__ ) . '/epiceditor/' );
 define('EPICEDITOR_URL', plugins_url() . '/' . basename(dirname(__FILE__)) . '/epiceditor/' );
-define('EPICEDITOR_VERSION', '0.2.0');
+define('EPICEDITOR_VERSION', '0.2.5-starck-modified');
 
 class SD_Markdown {
 
 	const PM = '_sd_disable_markdown';
 	const MD = '_sd_is_markdown';
 	const CONVERT = 'sd_convert_to_markdown';
-	const VERSION = '2.5.3';
+	const VERSION = '2.5.4';
 	const VERSION_OPT = 'mosi-version';
 
 	protected $new_api_post = false;
@@ -228,10 +228,10 @@ class SD_Markdown {
 		$content = preg_replace( '/\\\"/', '"', $content );
       
       	// Added by Starck Lin - parsing Github Fenced code blocks
-      	// /^ *``` *(\w+)? *\n([^\0]+?)\s*``` *(?:\n+|$)/
         $content = preg_replace("/\n```([A-z :]+)([^```]+?)\n```/", '<pre class="lang:$1">$2</pre>', $content );
-        //$content = preg_replace("/\s*```\s*(\w+)?\s*\n([^\0]+?)\s*```\s*(?:\n+|$)/", '<pre class="lang:$1">$2</pre>', $content );
         $content = preg_replace("/\n```([^```]+?)\n```/", '<pre>$1</pre>', $content );
+      	// /^ *``` *(\w+)? *\n([^\0]+?)\s*``` *(?:\n+|$)/
+        //$content = preg_replace("/\s*```\s*(\w+)?\s*\n([^\0]+?)\s*```\s*(?:\n+|$)/", '<pre class="lang:$1">$2</pre>', $content );
       	
 		// convert to Markdown
       	$content = $this->parser->transform( $content );
@@ -276,73 +276,85 @@ class SD_Markdown {
 
 <script>
 
-var epic_editor;
-
-function save_to_content() {
-	jQuery('#content').val( epic_editor.getElement('editor').body.innerText );
-}
+var epic_editor, temp_content;
 
 function toogleEpicEditor() {
 	if( epic_editor ) {
 		if( epic_editor.is('loaded') ) {
-			save_to_content();
+			
 			jQuery('#wp-content-media-buttons').show();
 			jQuery('#ed_toolbar').show();
 			jQuery('#content').show();
-			// jQuery('#save-post').attr('disabled',false);
-			// jQuery('#publish').attr('disabled',false);
+			
 			epic_editor.unload( function() {
 				jQuery('#epiceditor').css('height','0px');
+				console.log('epiceditor unloaded.');
 			} );
+
 		}else{
+
 			jQuery('#epiceditor').css('height', jQuery('#content').css('height') );
 			jQuery('#wp-content-media-buttons').hide();
 			jQuery('#ed_toolbar').hide();
 			jQuery('#content').hide();
-			// jQuery('#save-post').attr('disabled',true);
-			// jQuery('#publish').attr('disabled',true);
+			
+			temp_content = jQuery('#content').val();
+
 			epic_editor.load( function(){
+				
+				console.log(jQuery('#content').val());
+				epic_editor.getElement('editor').body.innerText = temp_content;
+				temp_content = '';
 				epic_editor.reflow();
-				//epic_editor.getElement('editor').body.innerHTML = jQuery('#content').val().replace( /[\\r]?\\n/g, "<br/>" );
-				epic_editor.getElement('editor').body.innerText = jQuery('#content').val();
 
 			} );
 		}
 	}
 }
 
-var opts = {
-  container: 'epiceditor',
-  basePath: '${url}',
-  clientSideStorage: true,
-  localStorageName: 'epiceditor',
-  useNativeFullsreen: true,
-  parser: marked,
-  file: {
-    name: 'epiceditor',
-    defaultContent: '',
-    autoSave: 100
-  },
-  theme: {
-    base:'/themes/base/epiceditor.css',
-    preview:'/themes/preview/github.css',
-    editor:'/themes/editor/epic-dark.css'
-  },
-  focusOnLoad: false,
-  shortcut: {
-    modifier: 18,
-    fullscreen: 70,
-    preview: 80
-  }
-}
-
 var epic_container = jQuery('<div id="epiceditor"></div>');
+
 epic_container.insertBefore('#content');
 
-epic_editor = new EpicEditor(opts);
+jQuery('document').ready(function(){
+	var opts = {
+	  container: 'epiceditor',
+	  textarea: document.getElementById('content'),
+	  textareaClearOnUnload: false,
+	  basePath: '${url}',
+	  clientSideStorage: true,
+	  localStorageName: 'epiceditor',
+	  useNativeFullsreen: true,
+	  parser: marked,
+	  file: {
+	    name: 'epiceditor',
+	    defaultContent: '',
+	    autoSave: 100
+	  },
+	  theme: {
+	    base:'/themes/base/epiceditor.css',
+	    preview:'/themes/preview/github.css',
+	    editor:'/themes/editor/epic-dark.css'
+	  },
+	  button: {
+	    preview: true,
+	    fullscreen: true
+	  },
+	  focusOnLoad: false,
+	  shortcut: {
+	    modifier: 18,
+	    fullscreen: 70,
+	    preview: 80
+	  },
+	  string: {
+	    togglePreview: 'Toggle Preview Mode',
+	    toggleEdit: 'Toggle Edit Mode',
+	    toggleFullscreen: 'Enter Fullscreen'
+	  }
+	}
 
-epic_editor.on('save', function(){
-	save_to_content();
+	epic_editor = new EpicEditor(opts);
+
 });
 
 </script>
