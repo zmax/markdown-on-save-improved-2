@@ -1,6 +1,6 @@
 # Markdown on Save Improved 2
 
-WordPress + Markdown + EpicEditor, and it support Github fenced code block. (It required with Crayon syntax highlighter plugin)
+WordPress + Markdown + EpicEditor, and it support Github fenced code block. (It compatible with Crayon syntax highlighter plugin)
 
 Contributors: Starck Lin  
 Tags: markdown, formatting, mobile  
@@ -8,7 +8,19 @@ Requires at least: 3.3
 Tested up to: 3.5  
 Stable tag: 1.2   
 
+## Installation
+
+1. download me
+2. make a directory is named to `markdown-on-save` on your wordpress plugin folder
+3. drop all to there
+4. open your wordpress and activate it in Plugins panel.
+5. enjoy it!
+
 ## Changelog
+
+### 2.5.4
+
+- Support for indentation
 
 ### 2.5.3
 
