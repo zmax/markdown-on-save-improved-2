@@ -183,9 +183,9 @@ class SD_Markdown {
 
 		// Make sure markdown processing isn't disabled for this post
 		if ( $supports && ! ( $disable_ticked || $disable_comment_inserted ) ) {
-          
-          	// 將原始內容存至 post_content_filtered
-			$data['post_content_filtered'] = $data['post_content'];
+          	
+          	// 
+		$data['post_content_filtered'] = $data['post_content'];
           
           	// Do markdown processing
           	$data['post_content'] = $this->process( $data['post_content'], $id );
