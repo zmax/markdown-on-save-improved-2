@@ -22,7 +22,7 @@ License: GPL v2
  */
 
 if(!function_exists('get_plugin_data')) {
- 	require_once('wp-includes/plugin.php');
+ 	require_once(ABSPATH . 'wp-includes/plugin.php');
 }
 
 // Define the default path and URL for the WP Editor plugin
